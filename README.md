@@ -6,6 +6,8 @@ taken they land on a waitlist. It is the codebase you work in for Lab 1.
 **Read `ARCHITECTURE.md` first.** It maps the three layers (domain / service / repo)
 so you do not have to cold-read every file.
 
+Agent tool used for this lab: Claude Code, model Claude Sonnet 5 (`claude-sonnet-5`).
+
 ## Build and test
 
 ```
