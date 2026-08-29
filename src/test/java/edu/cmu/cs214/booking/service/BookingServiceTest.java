@@ -1,6 +1,7 @@
 package edu.cmu.cs214.booking.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import edu.cmu.cs214.booking.domain.Booking;
@@ -125,5 +126,24 @@ class BookingServiceTest {
         List<Booking> bookings = svc.listBookings(roomA);
         assertEquals(1, bookings.size());
         assertEquals(alice, bookings.get(0).user());
+    }
+
+    @Test
+    void isAvailableIsFalseWhenAnEarlierBookingOverlaps() {
+        BookingService svc = newService();
+        svc.book(roomA, alice, new TimeInterval(600, 720));
+        // The room is held 10:00-12:00; a 10:30-11:40 slot is not available.
+        assertFalse(svc.isAvailable(roomA, new TimeInterval(630, 700)));
+    }
+
+    @Test
+    void isAvailableAgreesWithBook() {
+        BookingService svc = newService();
+        svc.book(roomA, alice, new TimeInterval(600, 720));
+        TimeInterval slot = new TimeInterval(630, 700);
+        // If isAvailable says the slot is free, booking it must confirm, not waitlist.
+        if (svc.isAvailable(roomA, slot)) {
+            assertInstanceOf(BookingResult.Confirmed.class, svc.book(roomA, bob, slot));
+        }
     }
 }
