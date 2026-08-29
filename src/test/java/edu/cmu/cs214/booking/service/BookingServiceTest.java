@@ -58,4 +58,21 @@ class BookingServiceTest {
         svc.book(roomA, bob, new TimeInterval(660, 720));
         assertEquals(2, svc.listBookings(roomA).size());
     }
+
+    @Test
+    void cancelRemovesTheBooking() {
+        BookingService svc = newService();
+        BookingResult r = svc.book(roomA, alice, new TimeInterval(600, 660));
+        String id = ((BookingResult.Confirmed) r).booking().id();
+        svc.cancelBooking(id);
+        assertEquals(0, svc.listBookings(roomA).size());
+    }
+
+    @Test
+    void cancelUnknownIdIsNoOp() {
+        BookingService svc = newService();
+        svc.book(roomA, alice, new TimeInterval(600, 660));
+        svc.cancelBooking("no-such-id");
+        assertEquals(1, svc.listBookings(roomA).size());
+    }
 }
