@@ -45,15 +45,12 @@ public class BookingService {
 
     /**
      * Reports whether {@code room} is free over {@code interval}, so callers can
-     * check availability before attempting to book.
+     * check availability before attempting to book. Consistent with {@link #book}:
+     * returns {@code true} exactly when a booking for {@code interval} would be
+     * confirmed rather than waitlisted.
      */
     public boolean isAvailable(Room room, TimeInterval interval) {
-        for (Booking b : store.bookingsForRoom(room)) {
-            if (b.interval().start() >= interval.start() && b.interval().start() < interval.end()) {
-                return false;
-            }
-        }
-        return true;
+        return isRoomFree(room, interval);
     }
 
     /**
